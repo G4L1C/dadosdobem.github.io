@@ -1,0 +1,98 @@
+---
+title: "Interruption and AHT Analysis"
+output: html_notebook
+---
+
+This is an analysis of the effects of the interruptions in the call AHT.
+
+```{r setup, include=FALSE}
+library('RColorBrewer')
+library('pheatmap')
+library('grid')
+
+## Variables for dataset loading
+base_path <- 'C:\\Users\\p.cardoso\\Desktop\\Frontline\\Form_Comportamental_Formatado.csv'
+
+## variables for plot saving
+save_base_path <- 'C:\\Users\\p.cardoso\\Desktop\\Frontline\\R\\'
+interruption_AHT <- 'interruption_vs_AHT.png'
+interruption_quickly <- 'interruption_quickly.png'
+mood_empathy <- 'mood_empathy.png'
+
+## variables for plot customization
+colors <- brewer.pal(n = 9, name = "Reds")
+
+## importing datasets
+dataset <- read.csv(
+  file = base_path,
+  header = TRUE,
+  sep = ';',
+  encoding = 'UTF-8'
+)
+```
+
+This is how the interrupetion reflects on the AHT
+
+```{r}
+## creating matrix for heatmap
+heatmap_matrix <- table(dataset$O.Cliente.foi.interrompido.em.algum.momento.,
+                        dataset$Faixa.de.TMA)
+
+## reordering cols/rows
+heatmap_matrix <- heatmap_matrix[c(1,5,2,4,3),c(1,3,4,5,2,6)]
+
+## ploting
+pheatmap(
+  mat = heatmap_matrix
+  ,display_numbers = heatmap_matrix
+  ,labels_row = c('0','1','2','3','4+')
+  ,labels_col = c('0-2','2-5','5-8','8-10','10-12','+12')
+  ,cluster_rows = FALSE
+  ,cluster_cols = FALSE
+  ,number_color = 'white'
+  ,border_color = 'white'
+  ,scale = 'row'
+  ,color = colors
+  ,legend = F
+  ,main = 'Effects of interruption in AHT'
+  ,cellheight = 50
+  ,cellwidth = 50
+)
+
+grid.text("# of Interruptions", x = unit(0.95, "npc"), y = unit(0.5, "npc"), rot=270, gp=gpar(fontsize=16))
+grid.text("AHT Range", x = unit(0.5, "npc"), y = unit(0.1, "npc"), gp=gpar(fontsize=16))
+```
+
+This one I don't know what it does
+
+```{r}
+heatmap_matrix <- 
+  table(
+    dataset$Qual.o.Humor.do.cliente.durante.o.atendimento.,
+    dataset$Ao.longo.do.contato.o.agente.demonstrou.empatia.
+  )
+
+heatmap_matrix <- heatmap_matrix[c(4,2,3,1),c(3,2,1,4)]
+
+
+## ploting
+pheatmap(
+  mat = heatmap_matrix
+  ,display_numbers = heatmap_matrix
+  ,labels_row = c('H-H','A-H','H-A','A-A')
+  ,labels_col = c('No','Beginning','Ending','Yes')
+  ,cluster_rows = FALSE
+  ,cluster_cols = FALSE
+  ,number_color = 'white'
+  ,border_color = 'white'
+  ,scale = 'row'
+  ,color = colors
+  ,legend = F
+  ,main = 'Effects of interruption in AHT'
+  ,cellheight = 60
+  ,cellwidth = 60
+)
+
+grid.text("Client Mood", x = unit(0.95, "npc"), y = unit(0.5, "npc"), rot=270, gp=gpar(fontsize=16))
+grid.text("Empathy", x = unit(0.5, "npc"), y = unit(0.1, "npc"), gp=gpar(fontsize=16))
+```
